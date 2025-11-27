@@ -1,13 +1,18 @@
 pipeline {
-    agent any
-    
+    agent {
+        docker {
+            image 'markhobson/maven-node:latest'   // has Maven + Node + Git + Docker
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // so docker-compose works
+        }
+    }
+
     stages {
         stage('Checkout') {
             steps {
                 echo 'Checking out code...'
             }
         }
-        
+
         stage('Build Backend') {
             steps {
                 dir('backend') {
@@ -15,7 +20,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
@@ -24,14 +29,14 @@ pipeline {
                 }
             }
         }
-        
-        stage('Docker Compose Up') {
+
+        stage('Start App with Docker Compose') {
             steps {
                 sh 'docker-compose up -d --build'
             }
         }
     }
-    
+
     post {
         always {
             sh 'docker-compose down || true'
