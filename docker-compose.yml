@@ -21,7 +21,7 @@ services:
     build: ./backend
     restart: always
     ports:
-      - "8081:8081"
+      - "9999:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/journaldb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
