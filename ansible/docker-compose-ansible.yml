@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  ansible:
+    build: .
+    container_name: ansible-runner
+    volumes:
+      - .:/ansible
+      - ../k8s:/k8s
+      - ~/.kube:/root/.kube
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: host
+    stdin_open: true
+    tty: true

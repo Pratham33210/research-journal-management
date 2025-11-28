@@ -1,0 +1,33 @@
+---
+- name: Cleanup Kubernetes Deployment
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  
+  vars:
+    k8s_manifests_dir: "../k8s"
+  
+  tasks:
+    - name: Delete Frontend deployment
+      command: kubectl delete -f {{ k8s_manifests_dir }}/frontend-deployment.yml
+      ignore_errors: yes
+      
+    - name: Delete Backend deployment
+      command: kubectl delete -f {{ k8s_manifests_dir }}/backend-deployment.yml
+      ignore_errors: yes
+      
+    - name: Delete MySQL deployment
+      command: kubectl delete -f {{ k8s_manifests_dir }}/mysql-deployment.yml
+      ignore_errors: yes
+      
+    - name: Wait for all pods to be deleted
+      command: kubectl wait --for=delete pod --all --timeout=120s
+      ignore_errors: yes
+      
+    - name: Verify cleanup
+      command: kubectl get pods
+      register: remaining_pods
+      
+    - name: Display remaining resources
+      debug:
+        msg: "{{ remaining_pods.stdout_lines }}"
